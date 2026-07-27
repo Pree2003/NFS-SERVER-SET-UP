@@ -55,7 +55,6 @@ sudo parted /dev/nvme3n1` (Disk 3)
 
 Within the `parted` utility, I created a GPT partition table and a primary partition that utilized the entire disk by running the following commands:
 
-text
 mklabel gpt
 mkpart primary xfs 0% 100%
 quit
@@ -73,7 +72,7 @@ SCANNING SYSTEMS FOR AVAILABLE DISKS
 
 <img width="462" height="194" alt="image" src="https://github.com/user-attachments/assets/b31ea035-44d0-4d26-8ab6-7c5ff7e80fc8" />
 
-The `sudo lvmdiskscan` command was used to scan the system for all available disks and partitions that could be managed by **Logical Volume Manager (LVM)**. This command verifies that the newly attached storage devices have been successfully detected by the operating system before they are configured as physical volumes, volume groups, and logical volumes. Confirming the availability of the disks at this stage ensures that they are ready for the LVM configuration process.
+The `sudo lvmdiskscan` command was used to scan the system for all available disks and partitions that could be managed by Logical Volume Manager (LVM). This command verifies that the newly attached storage devices have been successfully detected by the operating system before they are configured as physical volumes, volume groups, and logical volumes. Confirming the availability of the disks at this stage ensures that they are ready for the LVM configuration process.
 
 CREATION OF PHYSICAL VOLUMES
 
@@ -81,17 +80,14 @@ CREATION OF PHYSICAL VOLUMES
 
 The next step was to create **physical volumes** from the three disk partitions using the following commands:
 
-```text
 sudo pvcreate /dev/nvme1n1p1
 sudo pvcreate /dev/nvme2n1p1
 sudo pvcreate /dev/nvme3n1p1
-```
 
 These commands initialized each partition as an LVM physical volume, making them available for inclusion in a volume group.
 
 After creating the physical volumes, I verified that they had been successfully created by running the following command:
 
-text
 sudo pvs
 
 
@@ -103,13 +99,11 @@ CREATING VOLUME  GROUPS
 
 The next step was to create a **volume group** named **webdata-vg** using the first physical volume with the following command:
 
-text
 sudo vgcreate webdata-vg /dev/nvme1n1p1
 
 
 Since the volume group had already been created, I did not create additional volume groups. Instead, I added the remaining physical volumes to the existing **webdata-vg** volume group using the following commands:
 
-text
 sudo vgextend webdata-vg /dev/nvme2n1p1
 sudo vgextend webdata-vg /dev/nvme3n1p1
 
@@ -136,7 +130,35 @@ XFS file system
 
 CREATING MOUNT DIRECTORIES
 <img width="554" height="272" alt="image" src="https://github.com/user-attachments/assets/fb08722e-1911-49f1-8de6-bf9490ef7e1c" />
-The `mkdir` commands were used to create the mount point directories **/mnt/apps**, **/mnt/logs**, and **/mnt/opt**. The `mount` commands then attached the logical volumes to these directories, making the storage accessible to the operating system and preparing it for use by the NFS server.
+The `mkdir` commands were used to create the mount point directories /mnt/apps, /mnt/logs, and /mnt/opt. The `mount` commands then attached the logical volumes to these directories, making the storage accessible to the operating system and preparing it for use by the NFS server.
+
+
+INSTALLING NFS
+<img width="553" height="244" alt="image" src="https://github.com/user-attachments/assets/73b1fa28-91e7-4fba-94a4-9b6c41101d19" />
+
+The next step was to install the Network File System (NFS) package using the following command:
+
+sudo yum install nfs-utils -y
+This command installed the NFS utilities required to configure the server as an NFS server, enabling it to share directories with the web servers over the network.
+
+<img width="554" height="180" alt="image" src="https://github.com/user-attachments/assets/834f93d7-50ac-4f2e-85f5-e9646c2efef3" />
+
+CONFIGURING NFS PERMISIONS 
+<img width="554" height="69" alt="image" src="https://github.com/user-attachments/assets/bdc1fa13-b9f0-4f67-b40e-a267e03ff1af" />
+<img width="447" height="571" alt="image" src="https://github.com/user-attachments/assets/1dc9e592-7038-4008-a1a1-86f60c835f47" />
+<img width="409" height="92" alt="image" src="https://github.com/user-attachments/assets/19012e5c-f470-43c6-b7b9-fcc77730fe02" />
+
+EDITING INBOUND RULES
+<img width="554" height="192" alt="image" src="https://github.com/user-attachments/assets/29f3ec17-7fbb-4c2b-9444-427c490b22e4" />
+The next step was to configure the Security Group by adding four inbound rules. These rules allowed communication between the NFS server and the web servers by opening the required ports for NFS services. This ensured that the web servers could securely access the shared directories hosted on the NFS server.
+
+CREATING DATABASE SERVER INSTANCE
+<img width="554" height="229" alt="image" src="https://github.com/user-attachments/assets/9a6f95ba-1300-48a9-bcab-47ed230018b7" />
+
+<img width="554" height="257" alt="image" src="https://github.com/user-attachments/assets/abe203e2-cc76-4911-b219-b0c7c6b3236f" />
+
+
+
 
 
 
