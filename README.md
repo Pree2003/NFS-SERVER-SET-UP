@@ -157,6 +157,79 @@ CREATING DATABASE SERVER INSTANCE
 
 <img width="554" height="257" alt="image" src="https://github.com/user-attachments/assets/abe203e2-cc76-4911-b219-b0c7c6b3236f" />
 
+After the database server instance was running, I established a secure SSH connection to the server using its key pair. This allowed me to access the instance and begin installing and configuring the MariaDB database for the Tooling application.
+
+UPDATING SERVER
+<img width="554" height="293" alt="image" src="https://github.com/user-attachments/assets/f5b0bea0-e746-4791-b082-981f0a4beb27" />
+The next step was to update the system packages using the following command:
+
+sudo yum -y update
+
+This command updated all installed packages to their latest available versions, ensuring that the database server had the latest security patches, bug fixes, and software updates before installing MariaDB.
+
+<img width="553" height="278" alt="image" src="https://github.com/user-attachments/assets/b3c5824b-1e44-49f0-a7d2-440cfd26ff2b" />
+
+INSTALLING MySQL SERVER
+
+<img width="554" height="110" alt="image" src="https://github.com/user-attachments/assets/08fa17b2-88ad-460a-add3-83f8b6030d55" />
+
+When I attempted to install MySQL using the command `sudo yum install mysql-server -y`, the installation failed because the package was not available on my system. To identify the operating system version, I ran the command `cat /etc/redhat-release`, which showed that I was using Red Hat Enterprise Linux 10.2 (Coughlan). Since MySQL Server is not available by default on RHEL 10.2, I installed MariaDB, which is the default and fully compatible database server for this project.
+
+<img width="380" height="59" alt="image" src="https://github.com/user-attachments/assets/cd9cc0a8-9cb8-4ddb-8815-52e3225649bd" />
+
+INSTALLING MARIADB
+
+<img width="554" height="283" alt="image" src="https://github.com/user-attachments/assets/1792fc21-16f2-4396-9f9b-95bbc083e270" />
+
+Since I could not install MySQL using the `sudo yum install mysql-server -y` command due to the version of my RHEL operating system, I installed **MariaDB** instead by running:
+
+sudo yum install mariadb-server -y
+
+MariaDB is the default database server for Red Hat Enterprise Linux 10.2 and is fully compatible with MySQL, making it a suitable choice for this project.
+
+<img width="553" height="252" alt="image" src="https://github.com/user-attachments/assets/c9af2f87-9894-49b8-afe5-939c796f4bb7" />
+
+MariaDB services were now running 
+<img width="538" height="621" alt="image" src="https://github.com/user-attachments/assets/8e4a8abd-6c2c-4c71-9781-90a95ed74c63" />
+
+After installing MariaDB, the next step was to secure the database server by creating a password for the **root** user. Setting a strong password helped protect the database from unauthorized access and ensured that only authorized users could perform administrative tasks.
+
+CREATING DATABASE
+<img width="512" height="580" alt="image" src="https://github.com/user-attachments/assets/8d5e30bc-6d6a-485a-9553-f889b1fa3abc" />
+<img width="554" height="64" alt="image" src="https://github.com/user-attachments/assets/9fb1b901-0976-4e8e-b5a7-43008d041611" />
+
+
+The next step was to verify that the MariaDB server was listening on port 3306 by running the following command:
+sudo ss -tlnp | grep 3306
+This command confirmed that the MariaDB service was active and listening for database connections on port 3306, which is the default port used by MySQL and MariaDB.
+
+<img width="554" height="115" alt="image" src="https://github.com/user-attachments/assets/0624938c-54d7-48c9-8808-31f13356318d" />
+
+LAUNCHING WEBSERVER INSTANCES
+
+<img width="553" height="49" alt="image" src="https://github.com/user-attachments/assets/65fb0e13-ce3a-4a61-9bf6-c2867d8053d4" />
+The next step was to launch two EC2 instances, **Web Server 1** and **Web Server 2**. These instances were configured to host the Tooling application and access the shared files stored on the NFS server while connecting to the MariaDB database server.
+
+
+<img width="554" height="241" alt="image" src="https://github.com/user-attachments/assets/737cbfd0-ba0b-4cab-8c31-d594deae8121" />
+
+After connecting to **Web Server 1** and **Web Server 2** in separate terminals, I installed the required NFS packages using the following command:
+sudo yum install nfs-utils nfs4-acl-tools -y
+This command installed the utilities required for the web servers to connect to and access the shared directories hosted on the NFS server.
+
+<img width="553" height="256" alt="image" src="https://github.com/user-attachments/assets/41e31692-fc47-4ee6-ac6d-2ba3f54db61d" />
+
+I installed the **NFS client** packages on both **Web Server 1** and **Web Server 2** using the `nfs-utils` and `nfs4-acl-tools` packages. This enabled both servers to connect to the NFS server and access the shared application files over the network.
+
+CREATING WEB ROOT DIRECTORY& MOUNTING NFS SHARE
+
+<img width="554" height="162" alt="image" src="https://github.com/user-attachments/assets/3c0ac619-698a-4acc-9a90-295c87bee5d8" />
+<img width="553" height="277" alt="image" src="https://github.com/user-attachments/assets/a7c36816-4fd3-4924-af18-ab708189c0f3" />
+<img width="554" height="371" alt="image" src="https://github.com/user-attachments/assets/c0374c08-c823-4fe6-a185-3805f28e5682" />
+<img width="554" height="92" alt="image" src="https://github.com/user-attachments/assets/0279a94c-5c4b-4419-b054-3f6744286fde" />
+
+
+
 
 
 
