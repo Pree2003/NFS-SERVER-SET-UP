@@ -21,7 +21,7 @@ Attaching my volumes
 <img width="554" height="200" alt="image" src="https://github.com/user-attachments/assets/5b17b1b6-43fc-4d8d-9516-2cbaa60efc17" />
 <img width="554" height="201" alt="image" src="https://github.com/user-attachments/assets/5606f21b-32e6-4d81-b42c-11cc1468de3a" />
 
-The screenshots above show how I attached the three EBS volumes to my NFS server instance. The first volume was attached as **/dev/sdb**, the second as **/dev/sdc**, and the third as **/dev/sdd**. Assigning unique device names ensured that each volume could be correctly identified and configured during the storage setup process.
+The screenshots above show how I attached the three EBS volumes to my NFS server instance. The first volume was attached as /dev/sdb, the second as /dev/sdc, and the third as /dev/sdd. Assigning unique device names ensured that each volume could be correctly identified and configured during the storage setup process.
 
 <img width="553" height="144" alt="image" src="https://github.com/user-attachments/assets/3d906ddd-9c3e-465c-90ed-33ab9fc78012" />
 
@@ -97,7 +97,7 @@ CREATING VOLUME  GROUPS
 
 <img width="554" height="198" alt="image" src="https://github.com/user-attachments/assets/808c0022-4082-4309-b34d-f2d446558885" />
 
-The next step was to create a **volume group** named **webdata-vg** using the first physical volume with the following command:
+The next step was to create a volume group named webdata-vg using the first physical volume with the following command:
 
 sudo vgcreate webdata-vg /dev/nvme1n1p1
 
@@ -257,6 +257,235 @@ The next step was to install Apache HTTP Server on Web Server 1 using the packag
 The sudo dnf list php command was used to check the availability of PHP packages in the system repositories. This helped verify that PHP was available for installation before configuring the web server to support PHP-based application files.
 
  <img width="554" height="266" alt="image" src="https://github.com/user-attachments/assets/5021c728-49b2-4c38-9172-1e7004654d82" />
+
+The next step was to install PHP and its required extensions using the following command:
+sudo dnf install php php-common php-fpm php-mysqlnd php-gd php-curl php-mbstring php-xml php-json -y
+This command installed PHP along with the necessary modules required for the Tooling application. These extensions allowed Apache to process PHP files, connect to the MariaDB database, handle different data formats, and provide additional PHP functionality required by the application.
+
+<img width="554" height="242" alt="image" src="https://github.com/user-attachments/assets/a0872df1-41da-4c27-826d-ee54ec3f14c5" />
+
+After installing PHP and its required extensions, the next step was to enable PHP-FPM (FastCGI Process Manager). PHP-FPM is responsible for processing PHP scripts and improving the performance of PHP applications by managing PHP requests separately from the Apache web server. The PHP-FPM service was enabled and started so that Apache could communicate with PHP and execute the Tooling application's PHP files correctly.
+
+<img width="554" height="201" alt="image" src="https://github.com/user-attachments/assets/967a3bd0-958d-4fa8-9f9b-8a3acb3e5822" />
+<img width="554" height="331" alt="image" src="https://github.com/user-attachments/assets/17c1dbc9-9406-41a5-9939-e9a83765dbd5" />
+
+The sudo setsebool -P httpd_execmem 1 command was used to enable the SELinux boolean that allows the Apache HTTP server to execute memory operations required by some PHP applications. The -P option makes the change permanent so that it remains enabled after a system reboot.
+
+<img width="554" height="295" alt="image" src="https://github.com/user-attachments/assets/de4255d9-7773-4be0-b8c6-716edd724b00" />
+
+The next step was to fork the repository from GitHub. Forking created a copy of the original project repository under my own GitHub account, allowing me to access, modify, and manage the project independently without affecting the original repository.
+
+<img width="554" height="266" alt="image" src="https://github.com/user-attachments/assets/d79aa910-c5af-4d38-b5d9-e50a620a1c18" />
+
+The next step was to install Git on the web server using the following command:
+sudo yum install git -y
+Git was installed because it is a version control tool used to download and manage the application source code from GitHub. It allowed me to clone the forked repository containing the Tooling application files onto the web server.
+
+ <img width="554" height="184" alt="image" src="https://github.com/user-attachments/assets/fc6dfb59-b131-4da2-8bca-87c399b04fae" />
+ <img width="501" height="468" alt="image" src="https://github.com/user-attachments/assets/57d98b14-bb9e-4d56-ab8b-7b08e3edbc7f" />
+
+ After cloning the repository from GitHub, I navigated into the tooling project directory using the following command:
+cd tooling
+This command changed the current working directory to the location where the Tooling application files were stored.
+I then used:
+ls -l
+to list the files and directories inside the project folder. This allowed me to verify that the application files were successfully cloned from GitHub and were available on the web server.
+
+<img width="553" height="27" alt="image" src="https://github.com/user-attachments/assets/01f579cd-fd40-47ea-bdb7-b7e691152987" />
+
+The next step was to launch Web Server 3. This additional web server was created to join the existing web server environment, allowing the application to run across multiple servers while sharing the same files from the NFS server and connecting to the same MariaDB database.
+
+<img width="554" height="267" alt="image" src="https://github.com/user-attachments/assets/8f2056a1-51a7-4076-a1b2-5181a667cd03" />
+
+The next step was to install the Apache HTTP Server using the following command:
+sudo yum install httpd -y
+This command installed Apache on the web server, allowing it to serve the Tooling application files to users through a web browser
+
+<img width="554" height="267" alt="image" src="https://github.com/user-attachments/assets/3fb9325b-8482-45f9-b875-fec4e846c9d0" />
+
+The next step was to install the EPEL (Extra Packages for Enterprise Linux) repository using the following command:
+sudo dnf install epel-release -y
+This command enabled the EPEL repository, which provides additional software packages that are not included in the default RHEL repositories. Enabling EPEL allowed me to install extra tools and dependencies required for the project
+
+<img width="554" height="233" alt="image" src="https://github.com/user-attachments/assets/710dfa93-6a19-426a-b892-ededccc1df19" />
+
+The next step was to enable and start the PHP-FPM service using the following command:sudo systemctl enable --now php-fpm ,this command enabled PHP-FPM to start automatically whenever the server boots and started the service immediately. PHP-FPM is responsible for processing PHP scripts, allowing Apache to execute the PHP files used by the Tooling application.
+
+<img width="554" height="265" alt="image" src="https://github.com/user-attachments/assets/e7621a97-22a6-46fe-a540-2adaf6b45b45" />
+
+The df -h | grep /var/www command was used to verify that the NFS share mounted on the /var/www directory was available and correctly connected. The command displayed the disk usage information for the mounted file system, confirming that the web server could access the shared storage provided by the NFS server.
+
+<img width="554" height="260" alt="image" src="https://github.com/user-attachments/assets/328d7a8a-edb9-4fe4-afa1-ec2e53f179e4" />
+
+The next step was to install PHP and its required extensions using the following command:
+sudo dnf install php php-cli php-fpm php-mysqlnd php-gd php-curl php-opcache -y
+This command installed PHP along with additional modules required by the Tooling application. These extensions allowed Apache to process PHP files, connect to the MariaDB database, improve PHP performance, and provide additional functionality required by the website.
+
+<img width="554" height="362" alt="image" src="https://github.com/user-attachments/assets/daaa2628-0d1f-445c-b2eb-e4199de6333a" />
+<img width="349" height="262" alt="image" src="https://github.com/user-attachments/assets/99069d6f-0250-47f4-899a-3f36f0849bcb" />
+
+After installing PHP and its required extensions, the next step was to enable and start the PHP-FPM service using the command:
+sudo systemctl enable --now php-fpm
+This command enabled PHP-FPM to start automatically after a reboot and started the service immediately. PHP-FPM is responsible for processing PHP scripts, allowing Apache to execute the PHP files used by the Tooling application.
+I then used the following command to check the server's network routing information:
+ip route
+The ip route command displayed the server's routing table, including the default gateway and network interface information. This helped verify the server's network configuration and ensured that the web server could communicate with other components in the architecture, such as the NFS server and database server.
+
+<img width="553" height="267" alt="image" src="https://github.com/user-attachments/assets/1dde149a-73e6-4e8f-93d1-38ef9eb59d9c" />
+
+The next step was to update the system packages using the following command:
+sudo yum -y update
+This command updated all installed packages on the server to their latest available versions. Updating the system ensured that the server had the latest security patches, bug fixes, and software improvements before installing and configuring the required services.
+
+<img width="349" height="60" alt="image" src="https://github.com/user-attachments/assets/338c5bcc-6c35-4414-a027-21afdee486b9" />
+
+The rpm -q nfs-utils command was used to verify that the NFS utilities package was installed on the web server. This confirmed that the required NFS client software was available, allowing the web server to connect to and access the shared directories from the NFS server.
+
+<img width="554" height="142" alt="image" src="https://github.com/user-attachments/assets/2ab14090-396c-458f-b168-76eaa5d4cbd6" />
+
+The next step was to install the required NFS client packages on the web servers using the following command:
+sudo yum install nfs-utils nfs4-acl-tools -y
+This command installed the tools required for the web servers to connect to the NFS server and access the shared directories. The nfs-utils package provides the necessary NFS client utilities, while nfs4-acl-tools provides tools for managing NFS version 4 access control lists (ACLs).
+
+<img width="554" height="436" alt="image" src="https://github.com/user-attachments/assets/cb3584e9-35e5-4b72-8398-4cae0fc76cf6" />
+
+ The rpcinfo -p 172.31.43.133 command was used to verify the RPC services running on the NFS server. It displayed the available RPC programs and their ports, confirming that the NFS server was reachable and that the required NFS services were active and available for the web servers to connect.
+
+<img width="554" height="266" alt="image" src="https://github.com/user-attachments/assets/662d458e-c92f-4a31-b2cc-6a68c3b20f34" />
+
+The next step was to install Git on the web server using the following command:
+sudo yum install git -y
+This command installed Git, a version control system used to download and manage the Tooling application's source code from GitHub. Installing Git allowed me to clone the forked repository onto the web server and deploy the application files.
+
+ <img width="554" height="162" alt="image" src="https://github.com/user-attachments/assets/fee8621f-948d-4154-8bf6-2f617902e260" />
+The next step was to clone my GitHub repository onto the web server using Git. Cloning created a local copy of the Tooling application files from my GitHub repository and placed them on the server. This allowed the Apache web server to access and serve the application files.
+The command used was:
+git clone https://github.com/Pre2003/tooling.git
+After cloning the repository, I accessed the project directory to verify that all application files were successfully downloaded.
+
+<img width="554" height="418" alt="image" src="https://github.com/user-attachments/assets/07bdd846-5309-4741-b716-4916c7359c87" />
+
+The next step was to log into the MariaDB database server to access the Tooling database. This allowed me to verify the database configuration and manage the data required by the Tooling application.
+I accessed MariaDB using the command:
+sudo mysql -u <username> -p
+After logging in, I selected the Tooling database to access its tables and confirm that the application database was available.
+USE tooling;
+This step ensured that the web application could connect successfully to the database server and access the required data.
+
+<img width="281" height="145" alt="image" src="https://github.com/user-attachments/assets/b67677d2-0718-41ac-b700-1626e9c36312" />
+
+ After connecting to the MariaDB server, I accessed the tooling database and checked the available tables. However, no tables were displayed, which indicated that the database had been created but the application database structure had not yet been imported. The next step was to import the required database schema so that the Tooling application could store and retrieve data.
+
+ <img width="554" height="413" alt="image" src="https://github.com/user-attachments/assets/e3da679a-461b-4f45-8daa-16a7966dccfb" />
+
+ The next step was to access the Tooling database and view the available tables using the following MariaDB commands:
+USE tooling;
+SHOW TABLES;
+The USE tooling; command was used to select the Tooling database so that all following SQL commands would be executed within that database.
+The SHOW TABLES; command was then used to display all tables available inside the Tooling database. This allowed me to verify whether the database structure had been successfully created and whether the required application tables were available.
+
+LOGGING INTO NFS SERVER
+
+<img width="554" height="160" alt="image" src="https://github.com/user-attachments/assets/8ea849e5-f53c-4b9e-8c11-1b4cb03419ac" />
+<img width="512" height="78" alt="image" src="https://github.com/user-attachments/assets/8596d196-2d89-4eee-a61e-3b2bde5f019d" />
+
+The next step was to configure the database connection file in the Tooling application. I opened the file and reviewed the database connection section to locate the variables responsible for connecting the application to MariaDB.
+The database connection details were updated with the following information:
+Database Host: 172.x.x.84 
+Database User: webaccess
+Database Password: Pre2k3
+Database Name: tooling
+Updating these values allowed the PHP application running on the web server to communicate with the MariaDB database server and retrieve application data successfully.
+
+<img width="554" height="148" alt="image" src="https://github.com/user-attachments/assets/2d7da0b7-eb14-42c7-9f94-a658671922f2" />
+
+The next step was to update the inbound rules in the AWS Security Group by opening port 80 (HTTP).
+Port 80 was opened to allow users to access the Tooling website through a web browser using the public IP address of the web server. This enabled HTTP traffic from the internet to reach the Apache web server running on the instance.
+This step was necessary because, without allowing inbound traffic on port 80, external users would not be able to connect to the website even if Apache was running correctly.
+
+<img width="553" height="260" alt="image" src="https://github.com/user-attachments/assets/11f1672a-9024-4564-b26c-afc41a05afe6" />
+
+After opening port 80, I tested the website using the web server's public IP address. The page was accessible, confirming that Apache was running and HTTP traffic was reaching the server. However, the Tooling application did not appear, which indicated that there was an issue with the application files, directory configuration, or database connection settings.Further troubleshooting was required to verify that the Tooling files were correctly placed in the Apache web root directory and that the application was properly connected to the MariaDB database.
+
+<img width="554" height="241" alt="image" src="https://github.com/user-attachments/assets/d5a38d96-363d-430e-84bb-4d83ca3538bf" />
+
+The next step was to check the contents of the Apache web root directory using the command:
+ls -l /var/www/html
+This command displayed the files and folders stored in the web server's document root. It was used to verify that the Tooling application files had been successfully copied or cloned into the correct directory where Apache could serve them to users through the browser. 
+
+<img width="554" height="233" alt="image" src="https://github.com/user-attachments/assets/e49ad8d3-a440-4d52-b687-c86d90462d9e" />
+<img width="366" height="236" alt="image" src="https://github.com/user-attachments/assets/f3900a17-b18d-4c67-a73f-3d614d4d679e" />
+<img width="554" height="226" alt="image" src="https://github.com/user-attachments/assets/416dcdae-2b80-48da-b63f-c51edd2e9aea" />
+
+After testing the website, I received a 403 Forbidden error. This indicated that Apache was running and reachable, but access to the requested files was being denied. I investigated the issue by checking file permissions, Apache configuration, and SELinux settings to ensure that the web server had the required access to the Tooling application files.
+
+<img width="554" height="114" alt="image" src="https://github.com/user-attachments/assets/f4227e98-6035-4cae-9a24-3f59e62b68d3" />
+<img width="553" height="236" alt="image" src="https://github.com/user-attachments/assets/af3cc389-f8a1-4741-bdd5-4e8550243391" />
+
+The next step was to check the Apache log files using the tail command:
+sudo tail -20 /var/log/httpd/error_log
+This command displayed the last 20 lines of the Apache error log. It was used for troubleshooting by identifying errors related to Apache configuration, file permissions, PHP processing, or access issues that prevented the Tooling application from loading correctly.
+The Apache logs helped determine the cause of the 403 Forbidden error and provided information needed to fix the web server configuration.
+
+<img width="554" height="168" alt="image" src="https://github.com/user-attachments/assets/2d7f472e-e946-4f9e-b04a-d39219384d3a" />
+<img width="437" height="86" alt="image" src="https://github.com/user-attachments/assets/224c1cd9-bdbb-426b-98d8-2f348ff3f9ae" />
+<img width="428" height="94" alt="image" src="https://github.com/user-attachments/assets/fef29128-2869-4280-99c2-8d3f18c871a6" />
+
+The next step was to disable SELinux on all servers (NFS server, database server, and web servers). SELinux (Security-Enhanced Linux) is a security mechanism that enforces access control policies on Linux systems. While it improves security, it can sometimes block services such as Apache, PHP, and NFS from accessing required files during configuration.
+For this project, SELinux was disabled to prevent permission and access restrictions that could interfere with communication between the servers, especially when the web servers needed to access application files mounted from the NFS server.
+The SELinux configuration file was edited using:
+sudo vi /etc/selinux/config
+The SELinux mode was changed from:
+SELINUX=enforcing to: SELINUX=disabled
+
+<img width="317" height="263" alt="image" src="https://github.com/user-attachments/assets/f10c327f-ef6a-41ae-a2c1-5bc271d6603e" />
+
+The next step was to reset the Tooling application's admin password directly from the MariaDB database so that I could log into the website.
+I first selected the Tooling database:
+USE tooling;
+Then I updated the password for the admin user using:
+UPDATE users
+SET password = MD5('Pass1234')
+WHERE username = 'admin';
+This command updated the password field for the user with the username admin. The MD5() function was used to encrypt the new password in the same format expected by the application database.
+After successfully updating the password, I was able to log into the Tooling website using the admin account.
+
+<img width="553" height="262" alt="image" src="https://github.com/user-attachments/assets/e5b34e0d-9148-4b02-9421-0d638c04be4a" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
