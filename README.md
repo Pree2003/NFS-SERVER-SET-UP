@@ -224,9 +224,40 @@ I installed the **NFS client** packages on both **Web Server 1** and **Web Serve
 CREATING WEB ROOT DIRECTORY& MOUNTING NFS SHARE
 
 <img width="554" height="162" alt="image" src="https://github.com/user-attachments/assets/3c0ac619-698a-4acc-9a90-295c87bee5d8" />
+
+The sudo systemctl status nfs-server.service command was used to check the current status of the NFS server service. It confirmed whether the service was active and running correctly, ensuring that the NFS server was ready to share files and directories with the web servers.
+
 <img width="553" height="277" alt="image" src="https://github.com/user-attachments/assets/a7c36816-4fd3-4924-af18-ab708189c0f3" />
+
+The sudo systemctl status firewalld command was used to check whether the firewall service was running. This helped verify the current firewall status and ensure that the required network services, such as NFS communication, were not being blocked.
+
 <img width="554" height="371" alt="image" src="https://github.com/user-attachments/assets/c0374c08-c823-4fe6-a185-3805f28e5682" />
+
+The sudo ss -tulnp | grep -E "111|2049" command was used to check that the required NFS ports were active and listening. Port 111 is used by the RPC service (port mapper), while port 2049 is the default port used by the NFS service. Verifying these ports confirmed that the NFS server was ready to accept connections from the web servers.
+
 <img width="554" height="92" alt="image" src="https://github.com/user-attachments/assets/0279a94c-5c4b-4419-b054-3f6744286fde" />
+
+The next step was to configure the NFS exports file by adding the private IP address of the web servers' network. The private IP address was added to define which clients were allowed to access the shared NFS directory. This ensured that only authorized servers within the private network could mount and use the shared storage.
+
+<img width="554" height="472" alt="image" src="https://github.com/user-attachments/assets/a3f59bda-1f99-4ca7-91b4-308acc03c5cf" />
+
+ The rpcinfo -p 172.31.43.133 command was used to verify the RPC services running on the NFS server. It displayed the available RPC programs, including NFS-related services, and confirmed that the NFS server was reachable and properly configured for remote file sharing.
+
+<img width="554" height="83" alt="image" src="https://github.com/user-attachments/assets/942804a6-caf9-4ac1-a91d-1360cdc6c4fc" />
+
+The mount | grep /var/www command was used to confirm that the NFS share was successfully mounted to the /var/www directory. The output verified that the web server was connected to the NFS server and could access the shared application files stored on the NFS storage
+ 
+INSTALLING APACHE 
+<img width="554" height="224" alt="image" src="https://github.com/user-attachments/assets/f7633575-86c5-485b-8d0d-b7cce0cd534c" />
+
+The next step was to install Apache HTTP Server on Web Server 1 using the package manager. Apache was installed to act as the web server responsible for serving the Tooling application files to users through the browser.
+
+<img width="554" height="266" alt="image" src="https://github.com/user-attachments/assets/79289e94-f769-4b03-8d20-7022b5bd92f7" />
+
+The sudo dnf list php command was used to check the availability of PHP packages in the system repositories. This helped verify that PHP was available for installation before configuring the web server to support PHP-based application files.
+
+ <img width="554" height="266" alt="image" src="https://github.com/user-attachments/assets/5021c728-49b2-4c38-9172-1e7004654d82" />
+
 
 
 
